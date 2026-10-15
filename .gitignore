@@ -1,0 +1,19 @@
+# Virtual environment (big, not needed on GitHub)
+venv/
+
+# Secrets - NEVER upload these
+.env
+*.db
+*.sqlite3
+
+# Python junk
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Uploaded videos (privacy)
+uploads/
+
+# Windows and VS Code
+.vscode/
+Thumbs.db
