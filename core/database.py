@@ -1,9 +1,16 @@
 import sqlite3
 from pathlib import Path
 
-# SQLite is a small database that lives in one file.
-# Python already has it built in, so we install nothing.
 DB_PATH = Path(__file__).resolve().parent.parent / "data" / "archon.db"
+
+SAMPLE_ROOMS = [
+    ("Living Room", 1, 28.0),
+    ("Kitchen", 1, 14.0),
+    ("Bedroom 1", 2, 16.0),
+    ("Bedroom 2", 2, 12.0),
+    ("Bathroom", 2, 6.0),
+    ("Home Office", 1, 10.0),
+]
 
 
 def get_connection():
@@ -27,6 +34,29 @@ def create_rooms_table():
     conn.close()
 
 
+def add_sample_rooms():
+    # INSERT OR IGNORE means: skip a room if it is already there.
+    # So running this file many times never makes duplicates.
+    conn = get_connection()
+    conn.executemany(
+        "INSERT OR IGNORE INTO rooms (name, floor, area_sqm) VALUES (?, ?, ?)",
+        SAMPLE_ROOMS,
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_all_rooms():
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT id, name, floor, area_sqm FROM rooms ORDER BY id"
+    ).fetchall()
+    conn.close()
+    return rows
+
+
 if __name__ == "__main__":
     create_rooms_table()
-    print("Rooms table is ready.")
+    add_sample_rooms()
+    for room in get_all_rooms():
+        print(room)
